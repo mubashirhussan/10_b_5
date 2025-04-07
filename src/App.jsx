@@ -1,9 +1,9 @@
-import Index from "./pages/Inbox/Index";
+import AppLayout from "./components/Layout";
 
 function App() {
   return (
     <>
-      <Index />
+      <AppLayout />
     </>
   );
 }

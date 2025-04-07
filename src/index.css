@@ -1,3 +1,4 @@
+@import "tailwindcss";
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -12,7 +13,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%; /* Ensure it stretches to full width */
+}
 a {
   font-weight: 500;
   color: #646cff;
@@ -25,9 +33,10 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  /* place-items: center; */
+  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
 }
 
 h1 {
@@ -48,6 +57,12 @@ button {
 }
 button:hover {
   border-color: #646cff;
+}
+html {
+  width: 100%;
+  margin: 0;
+  background-color: #222;
+  color: #fff;
 }
 button:focus,
 button:focus-visible {
