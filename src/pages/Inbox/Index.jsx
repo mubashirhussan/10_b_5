@@ -158,8 +158,9 @@ const Index = () => {
       accessorKey: "materialInfo",
       cell: ({ getValue }) => (
         <textarea
+          readOnly
           defaultValue={getValue()}
-          className="w-full min-h-[30px] p-2  rounded"
+          className="w-full min-h-[30px] p-2  rounded no-focus-outline"
           onChange={(e) => {
             // Optional: handle change if needed
             console.log("Updated value:", e.target.value);
@@ -185,8 +186,9 @@ const Index = () => {
       accessorKey: "aggregate",
       cell: ({ getValue }) => (
         <textarea
+          readOnly
           defaultValue={getValue()}
-          className="w-full min-h-[30px] p-2  rounded"
+          className="w-full min-h-[60px] p-2 no-focus-outline  rounded"
           onChange={(e) => {
             // Optional: handle change if needed
             console.log("Updated value:", e.target.value);
