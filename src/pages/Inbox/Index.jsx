@@ -183,7 +183,7 @@ const Index = () => {
     {
       header: "Aggregate no of shares",
       accessorKey: "aggregate",
-      cell: ({ getValue, row, column }) => (
+      cell: ({ getValue }) => (
         <textarea
           defaultValue={getValue()}
           className="w-full min-h-[30px] p-2  rounded"
