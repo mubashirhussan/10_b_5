@@ -157,17 +157,41 @@ const Index = () => {
       header: "Material Info",
       accessorKey: "materialInfo",
       cell: ({ getValue }) => (
-        <div className="break-words whitespace-normal">{getValue()}</div>
+        <textarea
+          defaultValue={getValue()}
+          className="w-full min-h-[30px] p-2  rounded"
+          onChange={(e) => {
+            // Optional: handle change if needed
+            console.log("Updated value:", e.target.value);
+          }}
+        />
       ),
       size: 200,
       minSize: 50,
       maxSize: 500,
     },
+    // {
+    //   header: "Aggregate no of shares",
+    //   accessorKey: "aggregate",
+    //   cell: ({ getValue }) => (
+    //     <div className="break-words whitespace-normal">{getValue()}</div>
+    //   ),
+    //   size: 200,
+    //   minSize: 50,
+    //   maxSize: 500,
+    // },
     {
       header: "Aggregate no of shares",
       accessorKey: "aggregate",
-      cell: ({ getValue }) => (
-        <div className="break-words whitespace-normal">{getValue()}</div>
+      cell: ({ getValue, row, column }) => (
+        <textarea
+          defaultValue={getValue()}
+          className="w-full min-h-[30px] p-2  rounded"
+          onChange={(e) => {
+            // Optional: handle change if needed
+            console.log("Updated value:", e.target.value);
+          }}
+        />
       ),
       size: 200,
       minSize: 50,
