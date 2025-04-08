@@ -34,8 +34,8 @@ const Index = () => {
 
   // Filing type options for dropdown
   const filingTypeOptions = [
-    { value: "10k", label: "10-K" },
-    { value: "10q", label: "10-Q" },
+    { value: "10-K", label: "10-K" },
+    { value: "10-Q", label: "10-Q" },
   ];
 
   const columns = [
