@@ -7,6 +7,8 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import React, { useState } from "react";
+
+import Index from "../pages/Inbox/Index";
 const { Header, Sider, Content } = Layout;
 
 const AppLayout = () => {
@@ -51,17 +53,12 @@ const AppLayout = () => {
             {
               key: "1",
               icon: <UserOutlined />,
-              label: "nav 1",
+              label: "INBOX",
             },
             {
               key: "2",
-              icon: <VideoCameraOutlined />,
-              label: "nav 2",
-            },
-            {
-              key: "3",
               icon: <UploadOutlined />,
-              label: "nav 3",
+              label: "QUALITY",
             },
           ]}
         />
@@ -80,11 +77,12 @@ const AppLayout = () => {
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
+            // style={{
+            //   fontSize: "16px",
+            //   width: 64,
+            //   height: 64,
+            // }}
+            className="ml-2 no-focus-outline"
           />
         </Header>
         <Content
@@ -97,36 +95,8 @@ const AppLayout = () => {
             scrollBehavior: "auto",
           }}
         >
-          {/* Dummy Content for Scrolling */}
-          <div style={{ height: "2000px" }}>
-            <h1>Dummy Content for Scrolling</h1>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
-            <p>
-              This is some placeholder text. Scroll down to see more content.
-            </p>
+          <div>
+            <Index />
           </div>
         </Content>
       </Layout>

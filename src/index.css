@@ -81,3 +81,48 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+.table-container {
+  /* overflow-x: auto; */
+}
+
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+
+.responsive-table th,
+.responsive-table td {
+  padding: 10px;
+  /* border: 1px solid #ccc; */
+  text-align: left;
+  white-space: nowrap;
+}
+
+.sortable {
+  cursor: pointer;
+}
+
+.pagination {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  .responsive-table th,
+  .responsive-table td {
+    padding: 6px;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.no-focus-outline:focus,
+.no-focus-outline:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
