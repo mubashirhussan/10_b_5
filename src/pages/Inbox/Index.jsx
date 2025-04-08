@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 import CustomDataTable from "../../components/CustomDataTable";
 import IndeterminateCheckbox from "../../components/IndeterminateCheckbox";
-import { Button, Select, DatePicker, Input, Row, Col, Space } from "antd";
+import {
+  Button,
+  Select,
+  DatePicker,
+  Input,
+  Row,
+  Col,
+  Space,
+  Tooltip,
+} from "antd";
 import { ClearOutlined } from "@ant-design/icons";
+import { DATA_VIEW_LIST } from "../../data";
 
 const { Option } = Select;
 const { Search } = Input;
 
 const Index = () => {
-  const [expandedRowState, setExpandedRowState] = useState([]);
-  const [rowSelection, setRowSelection] = useState({});
+  // const [expandedRowState, setExpandedRowState] = useState([]);
+  // const [rowSelection, setRowSelection] = useState({});
   const [filters, setFilters] = useState({
     fid: null,
     filingType: null,
@@ -26,83 +36,174 @@ const Index = () => {
   const filingTypeOptions = [
     { value: "10k", label: "10-K" },
     { value: "10q", label: "10-Q" },
-    { value: "8k", label: "8-K" },
-    { value: "4", label: "Form 4" },
-    { value: "5", label: "Form 5" },
   ];
 
   const columns = [
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <IndeterminateCheckbox
+    //       {...{
+    //         checked: table.getIsAllRowsSelected(),
+    //         indeterminate: table.getIsSomeRowsSelected(),
+    //         onChange: table.getToggleAllRowsSelectedHandler(),
+    //       }}
+    //       className="custom-checkbox"
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="">
+    //       <IndeterminateCheckbox
+    //         {...{
+    //           checked: row.getIsSelected(),
+    //           disabled: !row.getCanSelect(),
+    //           indeterminate: row.getIsSomeSelected(),
+    //           onChange: row.getToggleSelectedHandler(),
+    //         }}
+    //         className="custom-checkbox"
+    //       />
+    //     </div>
+    //   ),
+    //   size: 50,
+    // },
     {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-          className="custom-checkbox"
-        />
+      header: "FID",
+      accessorKey: "fid",
+      enableSorting: true,
+      size: 100,
+    },
+    {
+      header: "Company",
+      accessorKey: "company",
+      enableSorting: true,
+      size: 150,
+      minSize: 50,
+      maxSize: 500,
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
       ),
-      cell: ({ row }) => (
-        <div className="">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-            className="custom-checkbox"
-          />
-        </div>
+    },
+    {
+      header: "Insider",
+      accessorKey: "insider",
+      enableSorting: true,
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
+      ),
+      size: 170,
+      minSize: 50,
+      maxSize: 500,
+    },
+    {
+      header: "Designation",
+      accessorKey: "designation",
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
+      ),
+      size: 170,
+      minSize: 50,
+      maxSize: 500,
+    },
+    {
+      header: "Filing Type",
+      accessorKey: "filingType",
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
       ),
       size: 50,
+      minSize: 50,
+      maxSize: 500,
     },
-    { header: "FID", accessorKey: "fid", enableSorting: true },
-    { header: "Company", accessorKey: "company", enableSorting: true },
-    { header: "Insider", accessorKey: "insider", enableSorting: true },
-    { header: "Designation", accessorKey: "designation" },
-    { header: "Filing Type", accessorKey: "filingType" },
     { header: "Adoption Date", accessorKey: "adoptionDate" },
     {
-      header: "Termination Date/Expiration Date",
-      accessorKey: "terminationDate",
-    },
-    { header: "Security", accessorKey: "security" },
-    { header: "Duration", accessorKey: "duration" },
-    { header: "Shares", accessorKey: "planShares" },
-    // { header: "Additional Info.", accessorKey: "additionalInfo" },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
-          <Button
-            // disabled={isAllSelected}
-            to={`/mapping/${row.original.companyName}`}
-          >
-            Map
-          </Button>
+      header: () => (
+        <div className="text-center ">
+          <div>Termination Date/</div>
+          <div>Expiration Date</div>
         </div>
       ),
-      enableSorting: false,
+      accessorKey: "terminationDate",
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
+      ),
+      size: 150,
+      minSize: 50,
+      maxSize: 500,
     },
+    { header: "Security", accessorKey: "security" },
+    { header: "Duration", accessorKey: "duration", size: 50 },
+    { header: "Shares", accessorKey: "planShares", size: 50 },
+    {
+      header: "Plan",
+      accessorKey: "plan",
+      cell: ({ getValue }) => {
+        const plan = getValue();
+        const map = {
+          A: "Amended",
+          N: "New",
+          T: "Terminated",
+        };
+        return (
+          <Tooltip title={map[plan] || "N/A"}>
+            <span className="cursor-pointer bg-gray-200 px-2 py-1 rounded">
+              {plan}
+            </span>
+          </Tooltip>
+        );
+      },
+      size: 50,
+    },
+    {
+      header: "Material Info",
+      accessorKey: "materialInfo",
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
+      ),
+      size: 200,
+      minSize: 50,
+      maxSize: 500,
+    },
+    {
+      header: "Aggregate no of shares",
+      accessorKey: "aggregate",
+      cell: ({ getValue }) => (
+        <div className="break-words whitespace-normal">{getValue()}</div>
+      ),
+      size: 200,
+      minSize: 50,
+      maxSize: 500,
+    },
+    // { header: "Additional Info.", accessorKey: "additionalInfo" },
+    // {
+    //   accessorKey: "actions",
+    //   header: "Actions",
+    //   cell: ({ row }) => (
+    //     <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+    //       <Button
+    //         // disabled={isAllSelected}
+    //         to={`/mapping/${row.original.companyName}`}
+    //       >
+    //         Map
+    //       </Button>
+    //     </div>
+    //   ),
+    //   enableSorting: false,
+    // },
   ];
 
-  const handleRowClick = (e, row) => {
-    if (e.target.type === "checkbox") {
-      e.stopPropagation(); // Prevent row selection when clicking checkbox
-      return;
-    }
-    row.toggleExpanded();
-    setExpandedRowStateById(row.id, row.original, row.index);
-  };
+  // const handleRowClick = (e, row) => {
+  //   if (e.target.type === "checkbox") {
+  //     e.stopPropagation();
+  //     return;
+  //   }
+  //   row.toggleExpanded();
+  //   setExpandedRowStateById(row.id, row.original, row.index);
+  // };
 
-  const setExpandedRowStateById = (id, content, columnIndex) => {
-    expandedRowState[id] = { content, columnIndex };
-    setExpandedRowState([...expandedRowState]);
-  };
+  // const setExpandedRowStateById = (id, content, columnIndex) => {
+  //   expandedRowState[id] = { content, columnIndex };
+  //   setExpandedRowState([...expandedRowState]);
+  // };
 
   const handleFilterChange = (key, value) => {
     setFilters({
@@ -162,178 +263,8 @@ const Index = () => {
     });
   };
 
-  // ... (keep your existing dummyData array)
-  const dummyData = [
-    {
-      fid: "FID0001",
-      company: "COINBASE GLOBAL INC",
-      insider: "Brian Armstrong",
-      designation: "Founder, Chairman / CEO",
-      adoptionDate: "15-Aug-2024",
-      terminationDate: "14-Nov-2025",
-      planShares: "3,750,000",
-      reportedSell: "1,450,000",
-      remainingShares: "2,300,000",
-      remarks: "10-Q   361days",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0002",
-      company: "COINBASE GLOBAL INC",
-      insider: "Brian Armstrong",
-      designation: "Founder, Chairman / CEO",
-      adoptionDate: "16-Aug-2023",
-      terminationDate: "15-Nov-2024",
-      planShares: "1,800,000",
-      reportedSell: "1,032,178",
-      remainingShares: "767,822",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0003",
-      company: "TESLA INC",
-      insider: "Baglino Andrew D",
-      designation: "Senior Vice President",
-      adoptionDate: "13-Nov-2023",
-      terminationDate: "31-Dec-24",
-      planShares: "115,000",
-      reportedSell: "11,799",
-      remainingShares: "",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0004",
-      company: "TESLA INC",
-      insider: "Baglino Andrew D",
-      designation: "Senior Vice President",
-      adoptionDate: "1-Nov-2021",
-      terminationDate: "N/A",
-      planShares: "",
-      reportedSell: "217,015",
-      remainingShares: "",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0005",
-      company: "TESLA INC",
-      insider: "DENHOLM ROBYN M",
-      designation: "Independent Chairman of the Board",
-      adoptionDate: "25-Jul-2024",
-      terminationDate: "18-Jun-25",
-      planShares: "674,345",
-      reportedSell: "112,390",
-      remainingShares: "561,955",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0006",
-      company: "TESLA INC",
-      insider: "DENHOLM ROBYN M",
-      designation: "Independent Chairman of the Board",
-      adoptionDate: "23-Oct-2023",
-      terminationDate: "16-Aug-24",
-      planShares: "281,116",
-      reportedSell: "187,411",
-      remainingShares: "",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0007",
-      company: "TESLA INC",
-      insider: "Kirkhorn Zachary",
-      designation: "CFO",
-      adoptionDate: "29-Jul-2202",
-      terminationDate: "N/A",
-      planShares: "",
-      reportedSell: "7,502",
-      remainingShares: "",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0008",
-      company: "NVIDIA CORPORATION",
-      insider: "Kress Colette",
-      designation: "CFO",
-      adoptionDate: "22-Mar-2024",
-      terminationDate: "15-May-2025",
-      planShares: "50,000",
-      reportedSell: "433,340",
-      remainingShares: "66,660",
-      remarks:
-        "Split of 1:10 on 2024-06-10 , making the plan to 500,000 from 50,000",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0009",
-      company: "NVIDIA CORPORATION",
-      insider: "Kress Colette",
-      designation: "CFO",
-      adoptionDate: "24-Mar-2022",
-      terminationDate: "N/A",
-      planShares: "N/A",
-      reportedSell: "12,124",
-      remainingShares: "",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0010",
-      company: "NVIDIA CORPORATION",
-      insider: "Huang Jen Hsun",
-      designation: "President and Chief Executive Officer",
-      adoptionDate: "14-Mar-2024",
-      terminationDate: "31-Mar-2025",
-      planShares: "600,000",
-      reportedSell: "6,000,000",
-      remainingShares: "0",
-      remarks:
-        "Split of 1:10 on 2024-06-10 , making the plan to 6,000,000 from 600,000",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-    {
-      fid: "FID0011",
-      company: "META PLATFORMS INC",
-      insider: "Clegg Nicholas",
-      designation: "President (division / unit / region)",
-      adoptionDate: "12-May-2024",
-      terminationDate: "16-May-2025",
-      planShares: "7,528",
-      reportedSell: "7,290",
-      remainingShares: "",
-      remarks: "No remarks",
-      security: "company stock",
-      filingType: "10k",
-      duration: 187,
-    },
-  ];
   // Calculate total rows (or get from API response)
-  const filteredData = filterData(dummyData);
+  const filteredData = filterData(DATA_VIEW_LIST);
   const totalRows = filteredData.length;
 
   const handlePageSizeChange = (size) => {
@@ -351,7 +282,7 @@ const Index = () => {
   // Handle page change
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    setRowSelection({});
+    // setRowSelection({});
   };
   // Add this function to handle clearing all filters
   const clearAllFilters = () => {
@@ -479,12 +410,12 @@ const Index = () => {
               <CustomDataTable
                 columns={columns}
                 data={getCurrentPageData() || []}
-                onRowSelect={(event, row) => handleRowClick(event, row)}
-                rowSelection={rowSelection}
-                setRowSelection={setRowSelection}
-                expandedRowContent={expandedRowState}
-                getRowCanExpand={() => true}
-                enableMultiRowSelection={true}
+                // onRowSelect={(event, row) => handleRowClick(event, row)}
+                // rowSelection={rowSelection}
+                // setRowSelection={setRowSelection}
+                // expandedRowContent={expandedRowState}
+                // getRowCanExpand={() => true}
+                // enableMultiRowSelection={true}
                 currentPage={currentPage}
                 totalRows={totalRows}
                 pageSize={pageSize}

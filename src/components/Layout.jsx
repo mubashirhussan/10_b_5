@@ -3,19 +3,37 @@ import {
   MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
+import { Binoculars, CheckCircle, Map } from "lucide-react";
 import React, { useState } from "react";
-
-import Index from "../pages/Inbox/Index";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 const AppLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+
+  const location = useLocation(); // Get the current location object
+  const { id } = useParams();
+  const getRouteTitle = (path) => {
+    const match = path.match(/\/([a-zA-Z-]+)/);
+    if (!match) return "";
+    return match[1]
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const handleMenuClick = (e) => {
+    const key = e.key;
+
+    if (key === "1") navigate("/data-view");
+    else if (key === "2") navigate("/mapping");
+    else if (key === "3") navigate("/quality-gate");
+  };
 
   return (
     <Layout>
@@ -48,17 +66,23 @@ const AppLayout = () => {
         <Menu
           theme="dark"
           mode="inline"
+          onClick={handleMenuClick}
           defaultSelectedKeys={["1"]}
           items={[
             {
               key: "1",
-              icon: <UserOutlined />,
-              label: "INBOX",
+              icon: <Binoculars size={20} />,
+              label: "DATA VIEW",
             },
             {
               key: "2",
-              icon: <UploadOutlined />,
-              label: "QUALITY",
+              icon: <Map size={20} />,
+              label: "MAPPING",
+            },
+            {
+              key: "3",
+              icon: <CheckCircle size={20} />,
+              label: "QUALITY GATE",
             },
           ]}
         />
@@ -73,17 +97,22 @@ const AppLayout = () => {
             zIndex: 100,
           }}
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            // style={{
-            //   fontSize: "16px",
-            //   width: 64,
-            //   height: 64,
-            // }}
-            className="ml-2 no-focus-outline"
-          />
+          <div className="flex items-center space-x-2">
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              // style={{
+              //   fontSize: "16px",
+              //   width: 64,
+              //   height: 64,
+              // }}
+              className="ml-2 no-focus-outline"
+            />
+            <div className="font-bold  uppercase">
+              {`${getRouteTitle(location.pathname)}  ${id ? id : ""}`}
+            </div>
+          </div>
         </Header>
         <Content
           style={{
@@ -95,8 +124,8 @@ const AppLayout = () => {
             scrollBehavior: "auto",
           }}
         >
-          <div>
-            <Index />
+          <div className="h-full">
+            <Outlet />
           </div>
         </Content>
       </Layout>
