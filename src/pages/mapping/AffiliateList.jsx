@@ -197,33 +197,33 @@ const AffiliateList = () => {
     },
   ];
   const processedColumns = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-          className="custom-checkbox"
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-            className="custom-checkbox"
-          />
-        </div>
-      ),
-      size: 50,
-    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <IndeterminateCheckbox
+    //       {...{
+    //         checked: table.getIsAllRowsSelected(),
+    //         indeterminate: table.getIsSomeRowsSelected(),
+    //         onChange: table.getToggleAllRowsSelectedHandler(),
+    //       }}
+    //       className="custom-checkbox"
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="">
+    //       <IndeterminateCheckbox
+    //         {...{
+    //           checked: row.getIsSelected(),
+    //           disabled: !row.getCanSelect(),
+    //           indeterminate: row.getIsSomeSelected(),
+    //           onChange: row.getToggleSelectedHandler(),
+    //         }}
+    //         className="custom-checkbox"
+    //       />
+    //     </div>
+    //   ),
+    //   size: 50,
+    // },
     {
       accessorKey: "araId",
       header: "A R A. Id",

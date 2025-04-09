@@ -102,7 +102,7 @@ const AffiliateModal = ({
   //     insertionType: `Type ${String.fromCharCode(65 + (index % 3))}`,
   //   }));
   const onFinish = (values) => {
-    setProcessedData([values]);
+    setProcessedData((prev) => [...prev, values]);
     handleModalClose();
     console.log("Success:", values);
   };
