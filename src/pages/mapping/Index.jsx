@@ -11,7 +11,7 @@ const MappingList = () => {
       key: "issuer",
       component: <IssuerList />,
     },
-    { label: "Affiliate", key: "affiliate", component: <AffiliateList /> },
+    { label: "Insider", key: "insider", component: <AffiliateList /> },
   ];
 
   return (

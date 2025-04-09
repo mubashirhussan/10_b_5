@@ -17,7 +17,7 @@ const CustomDataTable = ({
   data,
   expandedRowContent,
   getRowCanExpand,
-  onRowSelect,
+  onRowSelect = () => {},
   setRowSelection,
   rowSelection = {},
   columnFilters,
@@ -27,6 +27,7 @@ const CustomDataTable = ({
   pageSize,
   handlePageChange,
   onPageSizeChange,
+  setData,
 }) => {
   const table = useReactTable({
     data,
@@ -39,6 +40,15 @@ const CustomDataTable = ({
     onRowSelectionChange: setRowSelection,
     preserveSelectedRowKeys: false,
     getRowId: (row) => row.id,
+    meta: {
+      updateData: (rowIndex, columnId, value) => {
+        setData((old) =>
+          old.map((row, index) =>
+            index === rowIndex ? { ...row, [columnId]: value } : row
+          )
+        );
+      },
+    },
     state: {
       rowSelection,
       columnFilters,

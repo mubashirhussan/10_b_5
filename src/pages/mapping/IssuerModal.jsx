@@ -10,7 +10,7 @@ import {
   Row,
   Select,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import IndeterminateCheckbox from "../../components/IndeterminateCheckbox";
 import CustomDataTable from "../../components/CustomDataTable";
@@ -25,6 +25,7 @@ const IssuerModal = ({
   const { Option } = Select;
   const [rowSelection, setRowSelection] = useState({});
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm(); // Search form
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -62,18 +63,10 @@ const IssuerModal = ({
                 form.setFieldsValue({
                   arcId: row.original.arcId || "",
                   companyName: row.original.companyName || "",
-                  cikIrs: row.original.cikIrs || "",
-                  irs: row.original.cikIrs || "",
+                  cik: row.original.cik || "",
+                  irs: row.original.irs || "",
                   fileNo: row.original.fileNo || "",
                   yearEnd: row.original.yearEnd || "",
-                  cusip: row.original.cusip || "",
-                  insertionType: row.original.insertionType || "",
-
-                  businessArea: "Default Area",
-                  mailAddress: "Default Address",
-                  businessPhone: "123456789",
-                  country: "Default Country",
-                  areaCode: "000",
                 });
               } else {
                 setRowSelection({}); // Deselect row
@@ -96,10 +89,16 @@ const IssuerModal = ({
       header: "Company Name",
       cell: ({ row }) => row.original.companyName || "N/A",
     },
+
     {
-      accessorKey: "cikIrs",
-      header: "CIK IRS",
-      cell: ({ row }) => row.original.cikIrs || "N/A",
+      accessorKey: "cik",
+      header: "CIK",
+      cell: ({ row }) => row.original.cik || "N/A",
+    },
+    {
+      accessorKey: "irs",
+      header: "IRS",
+      cell: ({ row }) => row.original.irs || "N/A",
     },
     {
       accessorKey: "fileNo",
@@ -110,16 +109,6 @@ const IssuerModal = ({
       accessorKey: "yearEnd",
       header: "Year End",
       cell: ({ row }) => row.original.yearEnd || "N/A",
-    },
-    {
-      accessorKey: "cusip",
-      header: "Cusip",
-      cell: ({ row }) => row.original.cusip || "N/A",
-    },
-    {
-      accessorKey: "insertionType",
-      header: "Insertion Type",
-      cell: ({ row }) => row.original.insertionType || "N/A",
     },
   ];
   // Handle modal close
@@ -138,7 +127,7 @@ const IssuerModal = ({
   //     insertionType: `Type ${String.fromCharCode(65 + (index % 3))}`,
   //   }));
   const onFinish = (values) => {
-    setProcessedData([values]);
+    setProcessedData((prev) => [...prev, values]);
     handleModalClose();
     console.log("Success:", values);
   };
@@ -163,7 +152,16 @@ const IssuerModal = ({
   //   const handleCancel = () => {
   //     navigate(-1);
   //   };
-
+  useEffect(() => {
+    if (isIssuerModal && modalData.length > 0) {
+      // Assuming modalData contains the selected row
+      const selectedRow = modalData[0]; // or use the appropriate logic to get the selected row
+      searchForm.setFieldsValue({
+        companyName: selectedRow.companyName || "",
+        // Set other fields if needed
+      });
+    }
+  }, [isIssuerModal, modalData, form]);
   return (
     <div>
       <Modal
@@ -177,22 +175,13 @@ const IssuerModal = ({
         // onCancel={() => setIsIssuerModal(false)}
       >
         <div className="py-2">
-          <Form autoComplete="off" variant={"underlined"}>
+          <Form form={searchForm} autoComplete="off" variant={"underlined"}>
             <Row
               gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
               className="justify-end mb-2 custom-form"
             >
               <Col className="gutter-row mb-0" span={6}>
-                <Form.Item
-                  className="mb-0"
-                  name="companyName"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your company name!",
-                    },
-                  ]}
-                >
+                <Form.Item className="mb-0" name="companyName">
                   <Input placeholder="Company name" />
                 </Form.Item>
               </Col>
@@ -253,7 +242,7 @@ const IssuerModal = ({
               <Row gutter={16}>
                 <Col span={6}>
                   <Form.Item
-                    label="Name"
+                    label="Company Name"
                     name="companyName"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
@@ -263,7 +252,7 @@ const IssuerModal = ({
                 <Col span={6}>
                   <Form.Item
                     label="Cik"
-                    name="cikIrs"
+                    name="cik"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <Input />
@@ -292,50 +281,31 @@ const IssuerModal = ({
               <Row gutter={16}>
                 <Col span={6}>
                   <Form.Item
-                    label="Business Area"
-                    name="businessArea"
-                    rules={[{ required: true, message: "Please input!" }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    label="Mail Address"
-                    name="mailAddress"
-                    rules={[{ required: true, message: "Please input!" }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    label="Business Phone"
-                    name="businessPhone"
+                    label="Year End"
+                    name="yearEnd"
                     rules={[{ required: true, message: "Please input!" }]}
                   >
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
-                <Col span={6}>
+                <Col span={6} className="mt-8">
                   <Form.Item
-                    label="Country"
-                    name="country"
-                    rules={[{ required: true, message: "Please input!" }]}
+                    label={null}
+                    name="mapWithCompanyId"
+                    valuePropName="checked"
+                    className="custom-checkbox"
                   >
-                    <Input />
+                    <Checkbox>Map With Company Id</Checkbox>
                   </Form.Item>
                 </Col>
-              </Row>
-
-              <Row gutter={16}>
                 <Col span={6}>
                   <Form.Item
-                    label="Area Code"
-                    name="areaCode"
+                    label="Company. ID"
+                    name="arcId"
                     rules={[{ required: true, message: "Please input!" }]}
+                    hidden
                   >
-                    <InputNumber style={{ width: "100%" }} />
+                    <Input />
                   </Form.Item>
                 </Col>
               </Row>

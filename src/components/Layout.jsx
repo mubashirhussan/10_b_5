@@ -13,9 +13,9 @@ const { Header, Sider, Content } = Layout;
 const AppLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-
-  const location = useLocation(); // Get the current location object
+  const location = useLocation();
   const { id } = useParams();
+
   const getRouteTitle = (path) => {
     const match = path.match(/\/([a-zA-Z-]+)/);
     if (!match) return "";
@@ -23,16 +23,25 @@ const AppLayout = () => {
       .replace(/-/g, " ")
       .replace(/\b\w/g, (char) => char.toUpperCase());
   };
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  // Determine the selected key based on the current pathname
+  const getSelectedKey = () => {
+    const path = location.pathname;
+    if (path.includes("/data-view")) return "1";
+    if (path.includes("/mapping")) return "2";
+    if (path.includes("/quality")) return "3";
+    return "1"; // default to first item if no match
+  };
+
   const handleMenuClick = (e) => {
     const key = e.key;
-
     if (key === "1") navigate("/data-view");
     else if (key === "2") navigate("/mapping");
-    else if (key === "3") navigate("/quality-gate");
+    else if (key === "3") navigate("/quality");
   };
 
   return (
@@ -42,32 +51,32 @@ const AppLayout = () => {
         collapsible
         collapsed={collapsed}
         style={{
-          height: "100vh", // Ensure the sidebar spans the full height of the viewport
-          position: "fixed", // Fix the sidebar position on the left
-          top: 0, // Align it to the top
-          left: 0, // Position it at the left
-          bottom: 0, // Ensure it reaches the bottom
-          zIndex: 1, // Ensure the sidebar stays below the header
-          overflowY: "auto", // Allow vertical scrolling within the sidebar if needed
+          height: "100vh",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 1,
+          overflowY: "auto",
         }}
       >
         <div
           style={{
-            color: "#fff", // Title color
+            color: "#fff",
             fontSize: "18px",
             fontWeight: "bold",
             padding: "16px",
             textAlign: "center",
-            backgroundColor: "#001529", // Background color
+            backgroundColor: "#001529",
           }}
         >
-          10b5
+          10B5-1
         </div>
         <Menu
           theme="dark"
           mode="inline"
           onClick={handleMenuClick}
-          defaultSelectedKeys={["1"]}
+          selectedKeys={[getSelectedKey()]} // Use selectedKeys instead of defaultSelectedKeys
           items={[
             {
               key: "1",
@@ -102,14 +111,9 @@ const AppLayout = () => {
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
-              // style={{
-              //   fontSize: "16px",
-              //   width: 64,
-              //   height: 64,
-              // }}
               className="ml-2 no-focus-outline"
             />
-            <div className="font-bold  uppercase">
+            <div className="font-bold uppercase">
               {`${getRouteTitle(location.pathname)}  ${id ? id : ""}`}
             </div>
           </div>

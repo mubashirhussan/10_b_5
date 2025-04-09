@@ -3,7 +3,7 @@ import React from "react";
 
 const { Text } = Typography;
 
-const ProcessedDetailModal = ({
+const AffiliateProcessDetailModal = ({
   isDetailModal,
   setIsDetailModal,
   modalData,
@@ -31,17 +31,17 @@ const ProcessedDetailModal = ({
           <Col span={4}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <Text strong style={{ marginBottom: 4 }}>
-                Company ID
+                Affiliate ID
               </Text>
-              <Text>{modalData?.arcId || "N/A"}</Text>
+              <Text>{modalData?.araId || "N/A"}</Text>
             </div>
           </Col>
           <Col span={4}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <Text strong style={{ marginBottom: 4 }}>
-                Company Name
+                Affiliate Name
               </Text>
-              <Text>{modalData?.companyName || "N/A"}</Text>
+              <Text>{modalData?.affiliateName || "N/A"}</Text>
             </div>
           </Col>
           <Col span={4}>
@@ -52,34 +52,10 @@ const ProcessedDetailModal = ({
               <Text>{modalData?.cik || "N/A"}</Text>
             </div>
           </Col>
-          <Col span={4}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Text strong style={{ marginBottom: 4 }}>
-                IRS
-              </Text>
-              <Text>{modalData?.irs || "N/A"}</Text>
-            </div>
-          </Col>
-          <Col span={4}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Text strong style={{ marginBottom: 4 }}>
-                File No
-              </Text>
-              <Text>{modalData?.fileNo || "N/A"}</Text>
-            </div>
-          </Col>
-          <Col span={4}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Text strong style={{ marginBottom: 4 }}>
-                Year End
-              </Text>
-              <Text>{modalData?.yearEnd || "N/A"}</Text>
-            </div>
-          </Col>
         </Row>
       </Card>
     </Modal>
   );
 };
 
-export default ProcessedDetailModal;
+export default AffiliateProcessDetailModal;

@@ -24,8 +24,8 @@ const DATA_VIEW_LIST = [
     designation: "Founder, Director, TOP5 Insider",
     adoptionDate: "25-Aug-2024",
     terminationDate: "27-May-2025",
-    planShares: "866122",
-    reportedSell: "115665",
+    planShares: "866,122",
+    reportedSell: "115,665",
     remainingShares: "750,457",
     remarks: "No remarks",
     security: "common stock",
@@ -42,14 +42,14 @@ const DATA_VIEW_LIST = [
     designation: "Chief Legal Officer",
     adoptionDate: "28-Aug-2024",
     terminationDate: "12-Dec-2024",
-    planShares: "151005",
-    reportedSell: "7104",
+    planShares: "151,005",
+    reportedSell: "7,104",
     remainingShares: "143,901",
     remarks: "No remarks",
     security: "common stock",
     filingType: "10-Q",
     duration: 365,
-    plan: "N",
+    plan: "T",
     materialInfo: "shares sold in the previous quarter",
     aggregate: "50% of RSUs issued in the year",
   },
@@ -60,8 +60,8 @@ const DATA_VIEW_LIST = [
     designation: "Lead Independent Director",
     adoptionDate: "8-Aug-2024",
     terminationDate: "4-Nov-2026",
-    planShares: "50000",
-    reportedSell: "10000",
+    planShares: "50,000",
+    reportedSell: "10,000",
     remainingShares: "40,000",
     remarks: "No remarks",
     security: "common stock",
@@ -78,8 +78,8 @@ const DATA_VIEW_LIST = [
     designation: "CFO",
     adoptionDate: "1-May-2024",
     terminationDate: "31-Jul-25",
-    planShares: "84000",
-    reportedSell: "37606",
+    planShares: "84,000",
+    reportedSell: "37,606",
     remainingShares: "46,394",
     remarks: "No remarks",
     security: "common stock",
@@ -89,7 +89,6 @@ const DATA_VIEW_LIST = [
     materialInfo: "shares sold in the previous quarter",
     aggregate: "50% of RSUs issued in the year",
   },
-
   {
     fid: "FID0006",
     company: "NVIDIA CORPORATION",
@@ -101,7 +100,7 @@ const DATA_VIEW_LIST = [
     reportedSell: "433,340",
     remainingShares: "66,660",
     remarks:
-      "Split of 1:10 on 2024-06-10 , making the plan to 500,000 from 50,000",
+      "Split of 1:10 on 2024-06-10, making the plan to 500,000 from 50,000",
     security: "common stock",
     filingType: "10-K",
     duration: 187,
@@ -109,7 +108,6 @@ const DATA_VIEW_LIST = [
     materialInfo: "shares sold in the previous quarter",
     aggregate: "50% of RSUs issued in the year",
   },
-
   {
     fid: "FID0007",
     company: "NVIDIA CORPORATION",
@@ -121,18 +119,17 @@ const DATA_VIEW_LIST = [
     reportedSell: "6,000,000",
     remainingShares: "0",
     remarks:
-      "Split of 1:10 on 2024-06-10 , making the plan to 6,000,000 from 600,000",
+      "Split of 1:10 on 2024-06-10, making the plan to 6,000,000 from 600,000",
     security: "common stock",
     filingType: "10-K",
     duration: 187,
-    plan: "N",
+    plan: "T",
     materialInfo: "shares sold in the previous quarter",
     aggregate: "50% of RSUs issued in the year",
   },
   {
     fid: "FID0008",
     company: "NVIDIA CORPORATION",
-
     insider: "Dabiri John O.",
     designation: "Independent Director",
     adoptionDate: "18-Dec-2023",
@@ -173,11 +170,11 @@ const DATA_VIEW_LIST = [
     designation: "Executive Vice President",
     adoptionDate: "27-Aug-2023",
     terminationDate: "29-Nov-24",
-    planShares: "81500",
+    planShares: "81,500",
     reportedSell: "81,500",
     remainingShares: "Completed",
     remarks:
-      "Last reported for the plan is 2023-12-18, after cool off period next strated plan on March 2024",
+      "Last reported for the plan is 2023-12-18, after cool off period next started plan on March 2024",
     security: "common stock",
     filingType: "10-K",
     duration: 187,
@@ -204,4 +201,79 @@ const DATA_VIEW_LIST = [
     aggregate: "50% of RSUs issued in the year",
   },
 ];
-export { DATA_VIEW_LIST };
+
+const ISSUER_LIST = [
+  {
+    arcId: 25,
+    companyName: "meta",
+    cik: "0001565717",
+    irs: "610647538",
+    fileNo: "037833100",
+    yearEnd: "1231",
+  },
+  {
+    arcId: 5,
+    companyName: "facebook",
+    cik: null,
+    irs: null,
+    fileNo: null,
+    yearEnd: null,
+  },
+  {
+    arcId: 56,
+    companyName: "meta",
+    cik: null,
+    irs: "610647538",
+    fileNo: "037833100",
+    yearEnd: "1231",
+  },
+  {
+    arcId: 45,
+    companyName: "facebook",
+    cik: "0001565717",
+    irs: null,
+    fileNo: null,
+    yearEnd: null,
+  },
+];
+const AFFILIATE_LIST = [
+  {
+    araId: 33,
+    affiliateName: "mark zuckerberg",
+    cik: "0001548760",
+  },
+  {
+    araId: 42,
+    affiliateName: "Musk Elon",
+    cik: "0001494730",
+  },
+];
+const SECURITY_LIST = [
+  {
+    filingId: "001",
+    materialInfo: "shares consist of 1150 class A and 1325 class B",
+    noOfSecurityFormsToBeAdded: 2,
+  },
+  {
+    filingId: "002",
+    materialInfo: "shares consist of 11505 class A and 13625 RSU",
+    noOfSecurityFormsToBeAdded: 2,
+  },
+  {
+    filingId: "003",
+    materialInfo: "shares consist of 115068 class A",
+    noOfSecurityFormsToBeAdded: 1,
+  },
+  {
+    filingId: "004",
+    materialInfo: "shares consists of 1150 common and 1325 preferred stock",
+    noOfSecurityFormsToBeAdded: 2,
+  },
+  {
+    filingId: "005",
+    materialInfo: "shares consists of 1150 class A and 1325 class B",
+    noOfSecurityFormsToBeAdded: 2,
+  },
+];
+
+export { DATA_VIEW_LIST, ISSUER_LIST, AFFILIATE_LIST, SECURITY_LIST };

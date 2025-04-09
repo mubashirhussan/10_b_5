@@ -11,9 +11,7 @@ import {
 } from "antd";
 import React, { useEffect } from "react";
 
-const { Text } = Typography;
-
-const ProcessedUpdateModal = ({
+const AffiliateProcessUpdateModal = ({
   isUpdateModal,
   setIsUpdateModal,
   modalData,
@@ -24,13 +22,9 @@ const ProcessedUpdateModal = ({
     if (isUpdateModal && modalData) {
       console.log("Modal Data:", modalData); // Add this line
       form.setFieldsValue({
-        arcId: modalData.arcId,
-        companyName: modalData.companyName,
-        cikIrs: modalData.cikIrs,
-        fileNo: modalData.fileNo,
-        yearEnd: modalData.yearEnd,
-        cusip: modalData.cusip,
-        insertionType: modalData.insertionType,
+        araId: modalData.araId,
+        affiliateName: modalData.affiliateName,
+        cik: modalData.cik,
       });
     }
   }, [isUpdateModal, modalData, form]);
@@ -60,32 +54,17 @@ const ProcessedUpdateModal = ({
         >
           <Row gutter={[16, 24]}>
             <Col span={6}>
-              <Form.Item name="arcId" label="Company ID">
+              <Form.Item name="araId" label="Affiliate ID">
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name="companyName" label="Company Name">
+              <Form.Item name="affiliateName" label="Affiliate Name">
                 <Input />
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item name="cik" label="CIK ">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="irs" label="IRS ">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="fileNo" label="File No">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="yearEnd" label="Year End">
                 <Input />
               </Form.Item>
             </Col>
@@ -96,4 +75,4 @@ const ProcessedUpdateModal = ({
   );
 };
 
-export default ProcessedUpdateModal;
+export default AffiliateProcessUpdateModal;

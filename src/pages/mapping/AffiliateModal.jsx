@@ -10,7 +10,7 @@ import {
   Row,
   Select,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import IndeterminateCheckbox from "../../components/IndeterminateCheckbox";
 import CustomDataTable from "../../components/CustomDataTable";
@@ -28,7 +28,7 @@ const AffiliateModal = ({
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-
+  const [searchForm] = Form.useForm(); // Search form
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     // setRowSelection([]);
@@ -130,7 +130,16 @@ const AffiliateModal = ({
     setRowSelection({}); // Clear row selection
     setIsAffiliateModal(false); // Close the modal
   };
-
+  useEffect(() => {
+    if (isAffiliateModal && modalData.length > 0) {
+      // Assuming modalData contains the selected row
+      const selectedRow = modalData[0]; // or use the appropriate logic to get the selected row
+      searchForm.setFieldsValue({
+        affiliateName: selectedRow.affiliateName || "",
+        // Set other fields if needed
+      });
+    }
+  }, [isAffiliateModal, modalData, form]);
   return (
     <div>
       <Modal
@@ -144,7 +153,7 @@ const AffiliateModal = ({
         // onCancel={() => setIsIssuerModal(false)}
       >
         <div className="py-2">
-          <Form autoComplete="off" variant={"underlined"}>
+          <Form autoComplete="off" form={searchForm} variant={"underlined"}>
             <Row
               gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
               className="justify-end mb-2 custom-form"

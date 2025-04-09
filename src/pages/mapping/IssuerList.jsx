@@ -9,47 +9,34 @@ import { Button, Col, Form, Input, Row, Select } from "antd";
 import IssuerModal from "./IssuerModal";
 import ProcessedDetailModal from "./ProcessedDetailModal";
 import ProcessedUpdateModal from "./ProcessedUpdateModal";
+import { ISSUER_LIST } from "../../data";
 
 const IssuerList = () => {
-  const { Option } = Select; // Correct way to get Option
+  const { Option } = Select;
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
-  const [expandedRowState, setExpandedRowState] = useState([]);
   const [isIssuerModal, setIsIssuerModal] = useState(false);
   const [modalData, setModalData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("unprocessed");
-  const [processedData, setProcessedData] = useState();
+  const [processedData, setProcessedData] = useState([]);
   const [isDetailModal, setIsDetailModal] = useState(false);
   const [isUpdateModal, setIsUpdateModal] = useState(false);
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); // Items per page
+  const [pageSize, setPageSize] = useState(10);
+  const [companyNameFilter, setCompanyNameFilter] = useState("");
+  const [cikFilter, setCikFilter] = useState("");
 
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    setRowSelection({});
-    // You might want to fetch new data here if using API
-  };
-
-  // const [columnFilters, setColumnFilters] = useState([]);
   useEffect(() => {
     setIsAllSelected(Object.keys(rowSelection).length > 1);
   }, [rowSelection, setIsAllSelected]);
 
-  const handleRowClick = (e, row) => {
+  const handleRowClick = (e) => {
     if (e.target.type === "checkbox") {
-      e.stopPropagation(); // Prevent row selection when clicking checkbox
+      e.stopPropagation();
       return;
     }
-    row.toggleExpanded();
-    setExpandedRowStateById(row.id, row.original, row.index);
   };
-  const setExpandedRowStateById = (id, content, columnIndex) => {
-    expandedRowState[id] = { content, columnIndex };
-    setExpandedRowState([...expandedRowState]);
-  };
+
   const ProcessingTabs = [
     { value: "unprocessed", label: "Unprocessed" },
     { value: "processed", label: "Processed" },
@@ -57,23 +44,96 @@ const IssuerList = () => {
 
   const handleTabChange = (value) => {
     setSelectedTab(value);
-    console.log("Selected Tab:", value);
+    setCurrentPage(1); // Reset to first page when changing tabs
+    setRowSelection({}); // Clear selection when changing tabs
   };
+
   const onReasonChange = (value) => {
     console.log(value);
   };
+
   const handleMapClick = (rowData) => {
-    setModalData([rowData]); // For single row, wrap in array
+    setModalData([rowData]);
     setIsIssuerModal(true);
   };
+
   const handleDetailClick = (rowData) => {
-    setModalData(rowData); // For single row, wrap in array
+    setModalData(rowData);
     setIsDetailModal(true);
   };
+
   const handleUpdateClick = (rowData) => {
-    setModalData(rowData); // For single row, wrap in array
+    setModalData(rowData);
     setIsUpdateModal(true);
   };
+  const getFilteredData = (data) => {
+    return data.filter((item) => {
+      // Handle company name filter (case insensitive)
+      const companyNameMatch =
+        !companyNameFilter ||
+        (item.companyName &&
+          item.companyName
+            .toLowerCase()
+            .includes(companyNameFilter.toLowerCase()));
+
+      // Handle CIK filter (safe with null values)
+      const cikMatch =
+        !cikFilter ||
+        (item.cik !== null &&
+          item.cik !== undefined &&
+          item.cik.toString().includes(cikFilter));
+
+      return companyNameMatch && cikMatch;
+    });
+  };
+
+  //   const getCurrentPageData = () => {
+  //     const startIndex = (currentPage - 1) * pageSize;
+  //     const endIndex = startIndex + pageSize;
+  //     const dataToFilter =
+  //       selectedTab === "unprocessed" ? ISSUER_LIST : processedData;
+  //     const filteredData = getFilteredData(dataToFilter);
+  //     return filteredData.slice(startIndex, endIndex);
+  //   };
+  const getCurrentPageData = () => {
+    const dataToFilter =
+      selectedTab === "unprocessed" ? ISSUER_LIST : processedData || [];
+    const filteredData = getFilteredData(dataToFilter);
+
+    // Always return all filtered data when not using pagination
+    // Or implement proper pagination:
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredData.slice(startIndex, endIndex);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    setRowSelection({});
+  };
+
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
+
+  const handleGroupMapClick = () => {
+    const filteredData = getFilteredData(ISSUER_LIST);
+    const selectedRows = filteredData.filter(
+      (_, index) => rowSelection[(currentPage - 1) * pageSize + index]
+    );
+    setModalData(selectedRows);
+    setIsIssuerModal(true);
+  };
+
+  const totalRows =
+    selectedTab === "unprocessed"
+      ? getFilteredData(ISSUER_LIST).length
+      : getFilteredData(processedData).length;
+
+  const currentData = getCurrentPageData();
+
+  // ... (keep your existing column definitions)
   const unprocessedColumns = [
     {
       id: "select",
@@ -114,9 +174,14 @@ const IssuerList = () => {
       cell: ({ row }) => row.original.companyName || "N/A",
     },
     {
-      accessorKey: "cikIrs",
-      header: "CIK IRS",
-      cell: ({ row }) => row.original.cikIrs || "N/A",
+      accessorKey: "cik",
+      header: "CIK",
+      cell: ({ row }) => row.original.cik || "N/A",
+    },
+    {
+      accessorKey: "irs",
+      header: "IRS",
+      cell: ({ row }) => row.original.irs || "N/A",
     },
     {
       accessorKey: "fileNo",
@@ -128,16 +193,7 @@ const IssuerList = () => {
       header: "Year End",
       cell: ({ row }) => row.original.yearEnd || "N/A",
     },
-    {
-      accessorKey: "cusip",
-      header: "Cusip",
-      cell: ({ row }) => row.original.cusip || "N/A",
-    },
-    {
-      accessorKey: "insertionType",
-      header: "Insertion Type",
-      cell: ({ row }) => row.original.insertionType || "N/A",
-    },
+
     {
       accessorKey: "actions",
       header: "Actions",
@@ -185,7 +241,7 @@ const IssuerList = () => {
     },
     {
       accessorKey: "arcId",
-      header: "A R C. Id",
+      header: "Company .Id",
       cell: ({ row }) => row.original.arcId || "N/A",
       enableColumnFilters: true,
     },
@@ -195,9 +251,14 @@ const IssuerList = () => {
       cell: ({ row }) => row.original.companyName || "N/A",
     },
     {
-      accessorKey: "cikIrs",
-      header: "CIK IRS",
-      cell: ({ row }) => row.original.cikIrs || "N/A",
+      accessorKey: "cik",
+      header: "CIK",
+      cell: ({ row }) => row.original.cik || "N/A",
+    },
+    {
+      accessorKey: "irs",
+      header: "IRS",
+      cell: ({ row }) => row.original.irs || "N/A",
     },
     {
       accessorKey: "fileNo",
@@ -209,16 +270,7 @@ const IssuerList = () => {
       header: "Year End",
       cell: ({ row }) => row.original.yearEnd || "N/A",
     },
-    {
-      accessorKey: "cusip",
-      header: "Cusip",
-      cell: ({ row }) => row.original.cusip || "N/A",
-    },
-    {
-      accessorKey: "insertionType",
-      header: "Insertion Type",
-      cell: ({ row }) => row.original.insertionType || "N/A",
-    },
+
     {
       accessorKey: "actions",
       header: "Actions",
@@ -246,51 +298,11 @@ const IssuerList = () => {
       enableSorting: false,
     },
   ];
-  const columns =
-    selectedTab === "unprocessed" ? unprocessedColumns : processedColumns;
-  const dummyData = Array.from({ length: 125 }, (_, index) => ({
-    arcId: `${10000 + index}`,
-    companyName: `Company ${index + 1}`,
-    cikIrs: `${20000 + index}`,
-    fileNo: `${30000 + index}`,
-    yearEnd: `${2020 + (index % 5)}`,
-    cusip: `CUSIP${index}`,
-    insertionType: `Type ${String.fromCharCode(65 + (index % 3))}`,
-  }));
-  const handlePageSizeChange = (size) => {
-    setPageSize(size);
-    setCurrentPage(1); // Reset to first page when changing size
-  };
-  // Get current page data
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    return dummyData.slice(startIndex, endIndex);
-  };
-  console.log("processedData", processedData);
-  const currentData =
-    selectedTab === "unprocessed" ? getCurrentPageData() : processedData || []; // default to empty array
-  // Calculate total rows (or get from API response)
-
-  //   const totalRows = dummyData.length;
-  const totalRows =
-    selectedTab === "unprocessed" ? dummyData.length : processedData;
-  console.log("currentData", currentData);
-  // Handle group map button click
-  const handleGroupMapClick = () => {
-    const selectedRows = dummyData.filter(
-      (_, index) => rowSelection[(currentPage - 1) * pageSize + index]
-    );
-    setModalData(selectedRows);
-    setIsIssuerModal(true);
-  };
   return (
     <>
       <div className="flex justify-between mb-2 items-center">
-        {/* Tabs on the Left Side */}
         <CustomTab tabs={ProcessingTabs} onTabChange={handleTabChange} />
 
-        {/* Form on the Right Side */}
         <Form
           name="basic"
           autoComplete="off"
@@ -303,8 +315,7 @@ const IssuerList = () => {
               <Col>
                 <Button
                   onClick={handleGroupMapClick}
-                  // disabled={!isAllSelected}
-                  //   to={`/mapping/${123}`}
+                  className="no-focus-outline"
                 >
                   Group Map
                 </Button>
@@ -312,29 +323,21 @@ const IssuerList = () => {
             )}
 
             <Col lg={4}>
-              <Form.Item
-                name="companyName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your company name!",
-                  },
-                ]}
-              >
-                <Input placeholder="Search by company name" />
+              <Form.Item name="companyName">
+                <Input
+                  placeholder="Search by company name"
+                  value={companyNameFilter}
+                  onChange={(e) => setCompanyNameFilter(e.target.value)}
+                />
               </Form.Item>
             </Col>
             <Col lg={4}>
-              <Form.Item
-                name="cik"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your company name!",
-                  },
-                ]}
-              >
-                <Input placeholder="Search by cik number" />
+              <Form.Item name="cik">
+                <Input
+                  placeholder="Search by cik number"
+                  value={cikFilter}
+                  onChange={(e) => setCikFilter(e.target.value)}
+                />
               </Form.Item>
             </Col>
             <Col lg={4}>
@@ -356,23 +359,24 @@ const IssuerList = () => {
 
       <div className=" custom-table-wrapper ">
         {currentData.length > 0 ? (
-          <>
-            <CustomDataTable
-              columns={columns}
-              data={currentData || []} // Pass only current page data
-              onRowSelect={(event, row) => handleRowClick(event, row)} // Pass event to handleRowClick
-              rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
-              expandedRowContent={expandedRowState}
-              getRowCanExpand={() => true}
-              enableMultiRowSelection={true}
-              currentPage={currentPage}
-              totalRows={totalRows}
-              pageSize={pageSize}
-              handlePageChange={handlePageChange}
-              onPageSizeChange={handlePageSizeChange}
-            />
-          </>
+          <CustomDataTable
+            columns={
+              selectedTab === "unprocessed"
+                ? unprocessedColumns
+                : processedColumns
+            }
+            data={currentData || []}
+            onRowSelect={(event, row) => handleRowClick(event, row)}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            getRowCanExpand={() => true}
+            enableMultiRowSelection={true}
+            currentPage={currentPage}
+            totalRows={totalRows}
+            pageSize={pageSize}
+            handlePageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
         ) : (
           <div className="text-center text-gray-500">No record found.</div>
         )}
@@ -393,6 +397,7 @@ const IssuerList = () => {
         setIsUpdateModal={setIsUpdateModal}
         modalData={modalData}
       />
+      {/* Keep your modal components */}
     </>
   );
 };

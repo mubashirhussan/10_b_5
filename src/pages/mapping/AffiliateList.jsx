@@ -9,48 +9,36 @@ import { Button, Col, Form, Input, Row, Select } from "antd";
 import AffiliateModal from "./AffiliateModal";
 import ProcessedDetailModal from "./ProcessedDetailModal";
 import ProcessedUpdateModal from "./ProcessedUpdateModal";
+import AffiliateProcessDetailModal from "./AffiliateProcessDetailModal";
+import AffiliateProcessUpdateModal from "./AffiliateProcessUpdateModal";
+import { AFFILIATE_LIST } from "../../data";
 
 const AffiliateList = () => {
-  const { Option } = Select; // Correct way to get Option
+  const { Option } = Select;
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
-  const [expandedRowState, setExpandedRowState] = useState([]);
   const [isAffiliateModal, setIsAffiliateModal] = useState(false);
-  const [processedData, setProcessedData] = useState();
-
   const [modalData, setModalData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("unprocessed");
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); // Items per page
+  const [processedData, setProcessedData] = useState([]);
   const [isDetailModal, setIsDetailModal] = useState(false);
   const [isUpdateModal, setIsUpdateModal] = useState(false);
-  console.log("processedData", processedData);
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    setRowSelection({});
-    // You might want to fetch new data here if using API
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [companyNameFilter, setCompanyNameFilter] = useState("");
+  const [cikFilter, setCikFilter] = useState("");
 
-  // const [columnFilters, setColumnFilters] = useState([]);
   useEffect(() => {
     setIsAllSelected(Object.keys(rowSelection).length > 1);
   }, [rowSelection, setIsAllSelected]);
 
-  const handleRowClick = (e, row) => {
+  const handleRowClick = (e) => {
     if (e.target.type === "checkbox") {
-      e.stopPropagation(); // Prevent row selection when clicking checkbox
+      e.stopPropagation();
       return;
     }
-    row.toggleExpanded();
-    setExpandedRowStateById(row.id, row.original, row.index);
   };
-  const setExpandedRowStateById = (id, content, columnIndex) => {
-    expandedRowState[id] = { content, columnIndex };
-    setExpandedRowState([...expandedRowState]);
-  };
+
   const ProcessingTabs = [
     { value: "unprocessed", label: "Unprocessed" },
     { value: "processed", label: "Processed" },
@@ -58,23 +46,94 @@ const AffiliateList = () => {
 
   const handleTabChange = (value) => {
     setSelectedTab(value);
-    console.log("Selected Tab:", value);
+    setCurrentPage(1); // Reset to first page when changing tabs
+    setRowSelection({}); // Clear selection when changing tabs
   };
+
   const onReasonChange = (value) => {
     console.log(value);
   };
+
   const handleMapClick = (rowData) => {
-    setModalData([rowData]); // For single row, wrap in array
+    setModalData([rowData]);
     setIsAffiliateModal(true);
   };
+
   const handleDetailClick = (rowData) => {
-    setModalData(rowData); // For single row, wrap in array
+    setModalData(rowData);
     setIsDetailModal(true);
   };
+
   const handleUpdateClick = (rowData) => {
-    setModalData(rowData); // For single row, wrap in array
+    setModalData(rowData);
     setIsUpdateModal(true);
   };
+  const getFilteredData = (data) => {
+    return data.filter((item) => {
+      // Handle company name filter (case insensitive)
+      const companyNameMatch =
+        !companyNameFilter ||
+        (item.affiliateName &&
+          item.affiliateName
+            .toLowerCase()
+            .includes(companyNameFilter.toLowerCase()));
+
+      // Handle CIK filter (safe with null values)
+      const cikMatch =
+        !cikFilter ||
+        (item.cik !== null &&
+          item.cik !== undefined &&
+          item.cik.toString().includes(cikFilter));
+
+      return companyNameMatch && cikMatch;
+    });
+  };
+
+  //   const getCurrentPageData = () => {
+  //     const startIndex = (currentPage - 1) * pageSize;
+  //     const endIndex = startIndex + pageSize;
+  //     const dataToFilter =
+  //       selectedTab === "unprocessed" ? ISSUER_LIST : processedData;
+  //     const filteredData = getFilteredData(dataToFilter);
+  //     return filteredData.slice(startIndex, endIndex);
+  //   };
+  const getCurrentPageData = () => {
+    const dataToFilter =
+      selectedTab === "unprocessed" ? AFFILIATE_LIST : processedData || [];
+    const filteredData = getFilteredData(dataToFilter);
+
+    // Always return all filtered data when not using pagination
+    // Or implement proper pagination:
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredData.slice(startIndex, endIndex);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    setRowSelection({});
+  };
+
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
+
+  const handleGroupMapClick = () => {
+    const filteredData = getFilteredData(AFFILIATE_LIST);
+    const selectedRows = filteredData.filter(
+      (_, index) => rowSelection[(currentPage - 1) * pageSize + index]
+    );
+    setModalData(selectedRows);
+    setIsAffiliateModal(true);
+  };
+
+  const totalRows =
+    selectedTab === "unprocessed"
+      ? getFilteredData(AFFILIATE_LIST).length
+      : getFilteredData(processedData).length;
+
+  const currentData = getCurrentPageData();
   const unprocessedColumns = [
     {
       id: "select",
@@ -209,37 +268,6 @@ const AffiliateList = () => {
       enableSorting: false,
     },
   ];
-  const columns =
-    selectedTab === "unprocessed" ? unprocessedColumns : processedColumns;
-  const dummyData = Array.from({ length: 125 }, (_, index) => ({
-    araId: `${10000 + index}`,
-    affiliateName: `Company ${index + 1}`,
-    cik: `${20000 + index}`,
-  }));
-  // Calculate total rows (or get from API response)
-  //   const totalRows = dummyData.length;
-  const handlePageSizeChange = (size) => {
-    setPageSize(size);
-    setCurrentPage(1); // Reset to first page when changing size
-  };
-  // Get current page data
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    return dummyData.slice(startIndex, endIndex);
-  };
-  // Handle group map button click
-  const handleGroupMapClick = () => {
-    const selectedRows = dummyData.filter(
-      (_, index) => rowSelection[(currentPage - 1) * pageSize + index]
-    );
-    setModalData(selectedRows);
-    setIsAffiliateModal(true);
-  };
-  const currentData =
-    selectedTab === "unprocessed" ? getCurrentPageData() : processedData || []; // default to empty array
-  const totalRows =
-    selectedTab === "unprocessed" ? dummyData.length : processedData;
   return (
     <>
       <div className="flex justify-between mb-2 items-center">
@@ -259,6 +287,7 @@ const AffiliateList = () => {
               <Col>
                 <Button
                   onClick={handleGroupMapClick}
+                  className="no-focus-outline"
                   // disabled={!isAllSelected}
                   //   to={`/mapping/${123}`}
                 >
@@ -268,29 +297,21 @@ const AffiliateList = () => {
             )}
 
             <Col lg={4}>
-              <Form.Item
-                name="companyName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your company name!",
-                  },
-                ]}
-              >
-                <Input placeholder="Search by company name" />
+              <Form.Item name="affiliateName">
+                <Input
+                  placeholder="Search by affiliate name"
+                  value={companyNameFilter}
+                  onChange={(e) => setCompanyNameFilter(e.target.value)}
+                />
               </Form.Item>
             </Col>
             <Col lg={4}>
-              <Form.Item
-                name="cik"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your company name!",
-                  },
-                ]}
-              >
-                <Input placeholder="Search by cik number" />
+              <Form.Item name="cik">
+                <Input
+                  placeholder="Search by cik number"
+                  value={cikFilter}
+                  onChange={(e) => setCikFilter(e.target.value)}
+                />
               </Form.Item>
             </Col>
             <Col lg={4}>
@@ -314,12 +335,16 @@ const AffiliateList = () => {
         {currentData.length > 0 ? (
           <>
             <CustomDataTable
-              columns={columns}
-              data={currentData || []} // Pass only current page data
+              columns={
+                selectedTab === "unprocessed"
+                  ? unprocessedColumns
+                  : processedColumns
+              }
+              data={currentData || []}
               onRowSelect={(event, row) => handleRowClick(event, row)} // Pass event to handleRowClick
               rowSelection={rowSelection}
               setRowSelection={setRowSelection}
-              expandedRowContent={expandedRowState}
+              //   expandedRowContent={expandedRowState}
               getRowCanExpand={() => true}
               enableMultiRowSelection={true}
               currentPage={currentPage}
@@ -339,12 +364,12 @@ const AffiliateList = () => {
         modalData={modalData}
         setProcessedData={setProcessedData}
       />
-      <ProcessedDetailModal
+      <AffiliateProcessDetailModal
         isDetailModal={isDetailModal}
         setIsDetailModal={setIsDetailModal}
         modalData={modalData}
       />
-      <ProcessedUpdateModal
+      <AffiliateProcessUpdateModal
         isUpdateModal={isUpdateModal}
         setIsUpdateModal={setIsUpdateModal}
         modalData={modalData}
